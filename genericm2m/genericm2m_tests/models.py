@@ -28,3 +28,7 @@ class Person(models.Model):
     name = models.CharField(max_length=255)
     
     related = RelatedObjectsDescriptor()
+
+
+class Boring(models.Model):
+    name = models.CharField(max_length=255)

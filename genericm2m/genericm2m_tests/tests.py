@@ -1,7 +1,7 @@
 from django.test import TestCase
 
 from genericm2m.models import RelatedObject, RelatedObjectsDescriptor
-from genericm2m.genericm2m_tests.models import Food, Beverage, Person, RelatedBeverage
+from genericm2m.genericm2m_tests.models import Food, Beverage, Person, RelatedBeverage, Boring
 
 
 class RelationsTestCase(TestCase):
@@ -17,6 +17,9 @@ class RelationsTestCase(TestCase):
         self.mario = Person.objects.create(name='mario')
         self.sam = Person.objects.create(name='sam')
         self.chocula = Person.objects.create(name='chocula')
+        
+        self.table = Boring.objects.create(name='table')
+        self.chair = Boring.objects.create(name='chair')
     
     def assertRelatedEqual(self, rel_qs, tups, from_field='parent',
                            to_field='object'):
@@ -58,10 +61,20 @@ class RelationsTestCase(TestCase):
             (self.soda, self.beer),
             (self.soda, self.pizza),
         ))
+        
+        self.sandwich.related.connect(self.table)
+        
+        related = self.sandwich.related.all()
+        self.assertRelatedEqual(related, (
+            (self.sandwich, self.table),
+            (self.sandwich, self.milk),
+            (self.sandwich, self.soda),
+        ))
     
     def test_related_to(self):
         self.pizza.related.connect(self.soda)
         self.pizza.related.connect(self.beer)
+        self.pizza.related.connect(self.table)
         self.sandwich.related.connect(self.soda)
         self.sandwich.related.connect(self.milk)
         self.mario.related.connect(self.soda)
