@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from genericm2m.models import RelatedObject, RelatedObjectsDescriptor
+from genericm2m.models import RelatedObject, RelatedObjectsDescriptor, GFKOptimizedQuerySet
 from genericm2m.genericm2m_tests.models import Food, Beverage, Person, RelatedBeverage, Boring
 
 
@@ -216,3 +216,14 @@ class RelationsTestCase(TestCase):
             (self.pizza, self.beer),
             (self.pizza, self.soda),
         ), 'food', 'beverage')
+    
+    def test_generic_traversal(self):
+        self.pizza.related.connect(self.beer)
+        self.pizza.related.connect(self.soda)
+        self.pizza.related.connect(self.mario)
+        
+        related = self.pizza.related.all()
+        self.assertEqual(type(related), GFKOptimizedQuerySet)
+        
+        objects = related.generic_objects()
+        self.assertEqual(objects, [self.mario, self.soda, self.beer])
