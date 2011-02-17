@@ -16,19 +16,31 @@ class Food(models.Model):
     
     related = RelatedObjectsDescriptor()
     related_beverages = RelatedObjectsDescriptor(RelatedBeverage, 'food', 'beverage')
+    
+    def __unicode__(self):
+        return self.name
 
 
 class Beverage(models.Model):
     name = models.CharField(max_length=255)
     
     related = RelatedObjectsDescriptor()
+    
+    def __unicode__(self):
+        return self.name
 
 
 class Person(models.Model):
     name = models.CharField(max_length=255)
     
     related = RelatedObjectsDescriptor()
+    
+    def __unicode__(self):
+        return self.name
 
 
 class Boring(models.Model):
     name = models.CharField(max_length=255)
+    
+    def __unicode__(self):
+        return self.name
