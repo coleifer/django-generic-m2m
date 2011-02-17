@@ -1,7 +1,9 @@
 from django.test import TestCase
 
 from genericm2m.models import RelatedObject, RelatedObjectsDescriptor, GFKOptimizedQuerySet
-from genericm2m.genericm2m_tests.models import Food, Beverage, Person, RelatedBeverage, Boring
+from genericm2m.genericm2m_tests.models import (
+    Food, Beverage, Person, RelatedBeverage, Boring, AnotherRelatedObject, Note
+)
 
 
 class RelationsTestCase(TestCase):
@@ -227,3 +229,51 @@ class RelationsTestCase(TestCase):
         
         objects = related.generic_objects()
         self.assertEqual(objects, [self.mario, self.soda, self.beer])
+    
+    def test_custom_model_using_gfks(self):
+        self.note_a = Note.objects.create(content='a')
+        self.note_b = Note.objects.create(content='b')
+        self.note_c = Note.objects.create(content='c')
+        
+        self.note_a.related.connect(self.pizza)
+        self.note_a.related.connect(self.note_b)
+        
+        self.note_b.related.connect(self.cereal, alias='cereal note', description='lucky charms!')
+        self.note_b.related.connect(self.milk, alias='milk note', description='goes good with cereal')
+        
+        queryset = self.note_a.related.all()
+        self.assertEqual(queryset.model, AnotherRelatedObject)
+        self.assertTrue(isinstance(queryset, GFKOptimizedQuerySet))
+        
+        related_a = self.note_a.related.all()
+        self.assertRelatedEqual(related_a, (
+            (self.note_a, self.pizza),
+            (self.note_a, self.note_b),
+        ))
+        
+        related_b = self.note_b.related.all()
+        self.assertRelatedEqual(related_b, (
+            (self.note_b, self.cereal),
+            (self.note_b, self.milk),
+        ))
+        
+        cereal_rel, milk_rel = related_b
+        
+        self.assertEqual(cereal_rel.alias, 'cereal note')
+        self.assertEqual(cereal_rel.description, 'lucky charms!')
+        
+        self.assertEqual(milk_rel.alias, 'milk note')
+        self.assertEqual(milk_rel.description, 'goes good with cereal')
+        
+        related_c = self.note_c.related.all()
+        self.assertRelatedEqual(related_c, ())
+        
+        self.assertEqual(related_a.generic_objects(), [
+            self.pizza, self.note_b
+        ])
+        
+        self.assertEqual(related_b.generic_objects(), [
+            self.cereal, self.milk
+        ])
+        
+        self.assertEqual(related_c.generic_objects(), [])
