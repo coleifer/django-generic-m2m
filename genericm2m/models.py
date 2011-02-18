@@ -173,7 +173,6 @@ class RelatedObject(models.Model):
     parent_type = models.ForeignKey(ContentType, related_name="child_%(class)s")
     parent_id = models.IntegerField(db_index=True)
     parent = GenericForeignKey(ct_field="parent_type", fk_field="parent_id")
-    dnorm_parent = models.CharField(max_length=200)
 
     # ACTUAL RELATED OBJECT:
     object_type = models.ForeignKey(ContentType, related_name="related_%(class)s")
