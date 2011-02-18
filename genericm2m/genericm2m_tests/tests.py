@@ -1,3 +1,4 @@
+from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 
 from genericm2m.models import RelatedObject, RelatedObjectsDescriptor, GFKOptimizedQuerySet
@@ -230,6 +231,27 @@ class RelationsTestCase(TestCase):
         objects = related.generic_objects()
         self.assertEqual(objects, [self.mario, self.soda, self.beer])
     
+    def test_filtering(self):
+        self.pizza.related.connect(self.beer, alias='bud lite')
+        self.pizza.related.connect(self.soda, alias='pepsi')
+        self.pizza.related.connect(self.mario)
+        
+        rel_qs = self.pizza.related.filter(alias='bud lite')
+        self.assertRelatedEqual(rel_qs, (
+            (self.pizza, self.beer),
+        ))
+        
+        rel_qs = self.pizza.related.filter(object_type=ContentType.objects.get_for_model(Beverage))
+        self.assertRelatedEqual(rel_qs, (
+            (self.pizza, self.soda),
+            (self.pizza, self.beer),
+        ))
+        
+        rel_qs = self.beer.related.related_to().filter(alias='bud lite')
+        self.assertRelatedEqual(rel_qs, (
+            (self.pizza, self.beer),
+        ))
+        
     def test_custom_model_using_gfks(self):
         self.note_a = Note.objects.create(content='a')
         self.note_b = Note.objects.create(content='b')
@@ -264,6 +286,10 @@ class RelationsTestCase(TestCase):
         
         self.assertEqual(milk_rel.alias, 'milk note')
         self.assertEqual(milk_rel.description, 'goes good with cereal')
+        
+        self.assertRelatedEqual(self.note_b.related.filter(alias='cereal note'), (
+            (self.note_b, self.cereal),
+        ))
         
         related_c = self.note_c.related.all()
         self.assertRelatedEqual(related_c, ())
