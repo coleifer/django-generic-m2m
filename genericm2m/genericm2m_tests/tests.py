@@ -33,6 +33,10 @@ class RelationsTestCase(TestCase):
         self.assertEqual(rel_tup, list(tups))
     
     def test_connect(self):
+        """
+        Connect model instances to various other model instances, then query
+        the manager and check the queryset returned is correct
+        """
         self.pizza.related.connect(self.soda)
         self.pizza.related.connect(self.beer)
         self.pizza.related.connect(self.mario)
@@ -75,6 +79,11 @@ class RelationsTestCase(TestCase):
         ))
     
     def test_related_to(self):
+        """
+        Check the back-side of the double-GFK, note: this only works on objects
+        that have a RelatedObjectsDescriptor() pointing to the same model
+        class, in this case the default `RelatedObject`
+        """
         self.pizza.related.connect(self.soda)
         self.pizza.related.connect(self.beer)
         self.pizza.related.connect(self.table)
@@ -106,24 +115,40 @@ class RelationsTestCase(TestCase):
         ))
 
     def test_manager_methods(self):
+        """
+        Since the RelatedObjectsDescriptor behaves like a dynamic manager (much
+        the same as Django's ForeignRelatedObjectsDescriptor) test to ensure
+        that the manager behaves as expected and correctly implements all the
+        basic FK methods
+        """
+        # connect pizza to soda and grab the newly-created RelatedObject
         self.pizza.related.connect(self.soda)
-        rel_obj = RelatedObject.objects.all()[0] # grab the new related obj
+        rel_obj = RelatedObject.objects.all()[0]
         
+        # connect cereal to milk (this is just to make sure that anything
+        # modified on one Food object doesn't affect another Food object
         self.cereal.related.connect(self.milk)
         
+        # create a new RelatedObject but do not save it yet -- note that it does
+        # not have `parent_object` set
         new_rel_obj = RelatedObject(object=self.beer)
         
+        # add this related object to pizza, parent_object gets set and it will
+        # show up in the queryset as expected
         self.pizza.related.add(new_rel_obj)
         self.assertRelatedEqual(self.pizza.related.all(), (
             (self.pizza, self.beer),
             (self.pizza, self.soda),
         ))
         
+        # remove the original RelatedObject `rel_obj`, which was the connection
+        # from pizza -> soda
         self.pizza.related.remove(rel_obj)
         self.assertRelatedEqual(self.pizza.related.all(), (
             (self.pizza, self.beer),
         ))
         
+        # make sure clearing pizza's related queryset works
         self.pizza.related.clear()
         self.assertRelatedEqual(self.pizza.related.all(), ())
         
@@ -132,9 +157,16 @@ class RelationsTestCase(TestCase):
             (self.cereal, self.milk),
         ))
         
+        # there should be just one row in the table
         self.assertEqual(RelatedObject.objects.count(), 1)
     
     def test_model_level(self):
+        """
+        The RelatedObjectsDescriptor can work at the class-level as well and
+        applies to all instances of the model - check that when connections are
+        made between individual instances and then are queried via the class,
+        that all connections are returned from that model type
+        """
         self.pizza.related.connect(self.beer)
         self.cereal.related.connect(self.milk)
         
@@ -157,6 +189,10 @@ class RelationsTestCase(TestCase):
         ))
     
     def test_custom_connect(self):
+        """
+        Mimic the test_connect() method, but instead use the custom descriptor,
+        `related_beverages` which goes through the RelatedBeverage model
+        """
         self.pizza.related_beverages.connect(self.soda)
         self.pizza.related_beverages.connect(self.beer)
         
@@ -179,6 +215,10 @@ class RelationsTestCase(TestCase):
         self.assertRelatedEqual(related, ())
 
     def test_custom_model_manager(self):
+        """
+        Mimic the test_model_manager() method, but instead use the custom
+        descriptor and through model
+        """
         self.pizza.related_beverages.connect(self.soda)
         rel_obj = RelatedBeverage.objects.all()[0] # grab the new related obj
         
@@ -208,6 +248,10 @@ class RelationsTestCase(TestCase):
         self.assertEqual(RelatedBeverage.objects.count(), 1)
     
     def test_custom_model_level(self):
+        """
+        And lastly, test that the custom descriptor/through-model work as
+        expected at the model-level (previous tests were instance-level)
+        """
         self.pizza.related_beverages.connect(self.soda)
         self.pizza.related_beverages.connect(self.beer)
         self.sandwich.related_beverages.connect(self.soda)
@@ -221,17 +265,31 @@ class RelationsTestCase(TestCase):
         ), 'food', 'beverage')
     
     def test_generic_traversal(self):
+        """
+        Ensure that the RelatedObjectsDescriptor returns a GFKOptimizedQuerySet
+        when the through model contains a GFK -- also check that the queryset's
+        optimized lookup works as expected
+        """
         self.pizza.related.connect(self.beer)
         self.pizza.related.connect(self.soda)
         self.pizza.related.connect(self.mario)
         
+        # the manager returns instances of GFKOptimizedQuerySet
         related = self.pizza.related.all()
         self.assertEqual(type(related), GFKOptimizedQuerySet)
         
+        # check the queryset is using the right field
+        self.assertEqual(related.get_gfk().name, 'object')
+        
+        # the custom queryset's optimized lookup works correctly
         objects = related.generic_objects()
         self.assertEqual(objects, [self.mario, self.soda, self.beer])
     
     def test_filtering(self):
+        """
+        Check that filtering on RelatedObject fields (or through model fields)
+        works as expected
+        """
         self.pizza.related.connect(self.beer, alias='bud lite')
         self.pizza.related.connect(self.soda, alias='pepsi')
         self.pizza.related.connect(self.mario)
@@ -253,6 +311,10 @@ class RelationsTestCase(TestCase):
         ))
         
     def test_custom_model_using_gfks(self):
+        """
+        Check that using a custom through model with GFKs works as expected
+        (looking at models.py, Note uses `AnotherRelatedObject` as its through)
+        """
         self.note_a = Note.objects.create(content='a')
         self.note_b = Note.objects.create(content='b')
         self.note_c = Note.objects.create(content='c')
@@ -260,9 +322,12 @@ class RelationsTestCase(TestCase):
         self.note_a.related.connect(self.pizza)
         self.note_a.related.connect(self.note_b)
         
+        # create some notes with custom attributes
         self.note_b.related.connect(self.cereal, alias='cereal note', description='lucky charms!')
         self.note_b.related.connect(self.milk, alias='milk note', description='goes good with cereal')
         
+        # ensure that the queryset is using the correct model and automatically
+        # determines that a GFKOptimizedQuerySet can be used
         queryset = self.note_a.related.all()
         self.assertEqual(queryset.model, AnotherRelatedObject)
         self.assertTrue(isinstance(queryset, GFKOptimizedQuerySet))
@@ -281,12 +346,14 @@ class RelationsTestCase(TestCase):
         
         cereal_rel, milk_rel = related_b
         
+        # check that the custom attributes were saved correctly
         self.assertEqual(cereal_rel.alias, 'cereal note')
         self.assertEqual(cereal_rel.description, 'lucky charms!')
         
         self.assertEqual(milk_rel.alias, 'milk note')
         self.assertEqual(milk_rel.description, 'goes good with cereal')
         
+        # check that we can filter on fields as expected
         self.assertRelatedEqual(self.note_b.related.filter(alias='cereal note'), (
             (self.note_b, self.cereal),
         ))
@@ -294,6 +361,8 @@ class RelationsTestCase(TestCase):
         related_c = self.note_c.related.all()
         self.assertRelatedEqual(related_c, ())
         
+        # lastly, check that the GFKOptimizedQuerySet returns the expected
+        # results when doing the optimized lookup
         self.assertEqual(related_a.generic_objects(), [
             self.pizza, self.note_b
         ])
