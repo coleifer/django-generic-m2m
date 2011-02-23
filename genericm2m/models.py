@@ -5,10 +5,26 @@ from django.db.models.query import QuerySet
 
 
 class GFKOptimizedQuerySet(QuerySet):
+    def __init__(self, *args, **kwargs):
+        # pop the gfk_field from the kwargs if its passed in explicitly
+        self._gfk_field = kwargs.pop('gfk_field', None)
+        
+        # call the parent class' initializer
+        super(GFKOptimizedQuerySet, self).__init__(*args, **kwargs)
+    
+    def _clone(self, *args, **kwargs):
+        clone = super(GFKOptimizedQuerySet, self)._clone(*args, **kwargs)
+        clone._gfk_field = self._gfk_field
+        return clone
+    
     def get_gfk(self):
-        for field in self.model._meta.virtual_fields:
-            if isinstance(field, GenericForeignKey):
-                return field
+        if not self._gfk_field:
+            for field in self.model._meta.virtual_fields:
+                if isinstance(field, GenericForeignKey):
+                    self._gfk_field = field
+                    break
+        
+        return self._gfk_field
     
     def generic_objects(self):
         clone = self._clone()
@@ -102,7 +118,8 @@ class RelatedObjectsDescriptor(object):
         class RelatedManager(superclass):
             def get_query_set(self):
                 if uses_gfk:
-                    return GFKOptimizedQuerySet(self.model).filter(**(core_filters))
+                    qs = GFKOptimizedQuerySet(self.model, gfk_field=rel_obj.to_field)
+                    return qs.filter(**(core_filters))
                 else:
                     return superclass.get_query_set(self).filter(**(core_filters))
 
