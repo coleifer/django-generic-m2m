@@ -181,7 +181,7 @@ class RelatedObjectsDescriptor(object):
         return self.related_model._default_manager.filter(**query)
 
 
-class RelatedObject(models.Model):
+class BaseGFKRelatedObject(models.Model):
     """
     A generic many-to-many implementation where diverse objects are related
     across a single model to other diverse objects -> using a dual GFK
@@ -196,6 +196,16 @@ class RelatedObject(models.Model):
     object_id = models.IntegerField(db_index=True)
     object = GenericForeignKey(ct_field="object_type", fk_field="object_id")
     
+    class Meta:
+        abstract = True
+    
+
+class RelatedObject(BaseGFKRelatedObject):
+    """
+    A subclass of BaseGFKRelatedObject which adds two fields used for tracking
+    some metadata about the relationship, an alias and the date the relationship
+    was created
+    """
     alias = models.CharField(max_length=255, blank=True)
     creation_date = models.DateTimeField(auto_now_add=True)
     
