@@ -2,9 +2,10 @@
 django-generic-m2m
 ==================
 
-.. image:: http://media.charlesleifer.com/images/photos/autocomp_detail.png
+relate anything to anything.  the image below shows a blog post that has been
+"related" to 2 "Person" models and a "City" model:
 
-relate anything to anything
+.. image:: http://media.charlesleifer.com/images/photos/autocomp_detail.png
 
 
 what it does
@@ -20,8 +21,8 @@ example app
 -----------
 
 bundled with the source code is an example app which shows how generic-m2m
-can be used to create "tags" between models.  it uses [nathanborror's basic apps](https://github.com/nathanborror/django-basic-apps)
-with [django-completion](https://github.com/coleifer/django-completion) (shameless plug)
+can be used to create "tags" between models.  it uses `nathanborror's basic apps <https://github.com/nathanborror/django-basic-apps>`_
+with `django-completion <https://github.com/coleifer/django-completion>`_ (shameless plug)
 to allow users to "autocomplete" various relationships between models, so if I'm
 a user and want to create a new blog post I can tag it with
 relationships to objects representing a city, a person, a funny photo of a cat, etc:
