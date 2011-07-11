@@ -11,9 +11,11 @@ def create_post(request):
     form = PostForm(request.POST or None)
     
     if request.method == 'POST' and form.is_valid():
-        # do some other stuff
+        # save the Post instance
         new_post = form.save()
         
+        # grab the related objects from the form and add them
+        # to the new post instance
         for obj in form.cleaned_data['hidden_relationships']:
             new_post.related.connect(obj)
         
