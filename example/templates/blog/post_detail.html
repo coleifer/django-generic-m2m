@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+
+{% block title %}{{ object.title }}{% endblock %}
+
+{% block content_title %}{{ object.title }}{% endblock %}
+
+{% block content %}
+  <p class="date">{{ object.publish|date:"j F Y" }}</p>
+
+  <div class="body">
+    <p>{{ object.body|safe }}</p>
+  </div>
+
+  <h3>Related to:</h3>
+  <ul>
+  {% for obj in object.related.all.generic_objects %}
+    <li><a href="{{ obj.get_absolute_url }}">{{ obj }}</a></li>
+  {% empty %}
+    <li>Nothing here</li>
+  {% endfor %}
+  </ul>
+{% endblock %}

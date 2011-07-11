@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block extra_script %}
+  <script src="{{ STATIC_URL }}js/completion.js"></script> 
+  <script type="text/javascript">
+    $(function() {
+      var completion = new Site.Autocompletion();
+      completion.bind_listener('#id_relationships', '#id_hidden_relationships');
+    });
+  </script>
+{% endblock %}
+
+{% block title %}Create post{% endblock %}
+
+{% block content %}
+  <form method="post" action="">{% csrf_token %}
+    {{ form.as_p }}
+    <p><button type="submit">Save</button></p>
+  </form>
+{% endblock %}

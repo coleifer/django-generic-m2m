@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+
+  <title>{% block title %}{% endblock %} | {{ site_name }}</title>
+
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/style.css?v=1">
+  <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+  
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+
+  {% block extra_script %}{% endblock %}
+</head>
+
+<body class="{% block body_class %}{% endblock %}">
+  <div id="container">
+    {% block content_wrapper %}
+    <div id="main">
+      <h1>{% block content_title %}{% endblock %}</h1>
+      {% block content %}{% endblock %}
+    </div>
+    {% endblock %}
+
+    {% block sidebar_wrapper %}
+    <div id="sidebar">
+      {% block sidebar %}{% endblock %}
+    </div>
+    {% endblock %}
+    
+    {% block footer_wrapper %}
+    <div id="footer_wrapper">
+      <footer>{% block footer %}{% endblock %}</footer>
+    </div>
+    {% endblock %}
+  </div> <!--! end of #container -->
+</body>
+</html>
+
