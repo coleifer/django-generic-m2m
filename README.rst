@@ -2,6 +2,8 @@
 django-generic-m2m
 ==================
 
+.. image:: http://media.charlesleifer.com/images/photos/autocomp_detail.png
+
 relate anything to anything
 
 
@@ -12,6 +14,19 @@ the purpose of this project is to allow you to create database-level
 relationships between various objects using a consistent api.
 
 for a full tour of the api, the best place to look is the tests
+
+
+example app
+-----------
+
+bundled with the source code is an example app which shows how generic-m2m
+can be used to create "tags" between models.  it uses [nathanborror's basic apps](https://github.com/nathanborror/django-basic-apps)
+with [django-completion](https://github.com/coleifer/django-completion) (shameless plug)
+to allow users to "autocomplete" various relationships between models, so if I'm
+a user and want to create a new blog post I can tag it with
+relationships to objects representing a city, a person, a funny photo of a cat, etc:
+
+.. image:: http://media.charlesleifer.com/images/photos/autocomp-cats.png
 
 
 quick overview
@@ -36,7 +51,7 @@ say you have a couple models::
         def __unicode__(self):
             return self.name
 
-Here's a sample interactive interpreter session::
+Here's a sample interactive interpreter session to show the basic API::
 
     >>> pizza = Food.objects.create(name='pizza')
     >>> pepperoni = Food.objects.create(name='pepperoni')
