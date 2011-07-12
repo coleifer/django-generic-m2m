@@ -1,8 +1,10 @@
 -e svn+http://code.djangoproject.com/svn/django/branches/releases/1.3.X/#egg=django_1.3.X
--e git+git@github.com:coleifer/django-generic-m2m.git#egg=genericm2m
 -e git+https://github.com/nathanborror/django-basic-apps.git#egg=basic
--e git+git@github.com:coleifer/django-completion.git#egg=completion
+-e git+git://github.com/coleifer/django-completion.git#egg=completion
 
 # needed by basic
 django-tagging
 python-dateutil
+
+# should already be present
+#-e git+git://github.com/coleifer/django-generic-m2m.git#egg=genericm2m
