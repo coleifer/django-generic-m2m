@@ -65,6 +65,7 @@ The example app is centered around a few small pieces:
 * custom form classes and views to handle creating the relationships
 * javascript that handles autocompletion and storing data in the form
 * autocomplete providers that make it possible to do autocompletion on our models
+* code in template to show the related objects for a post or photo
 
 We'll tackle this stuff one bit at a time starting with the form classes and
 views, since thats all normal django stuff we're all probably familiar with.
@@ -191,5 +192,26 @@ before.  Here's a representative example::
 
 Signal handlers ensure that the autocomplete data is kept fresh whenever a model
 instance is saved or deleted.
+
+
+Template code
+^^^^^^^^^^^^^
+
+If you look in `the template code <https://github.com/coleifer/django-generic-m2m/blob/master/example/templates/blog/post_detail.html#L15>`_,
+all we do is loop over the relationships of the object.  The template uses
+an optimized lookup to traverse the GFK relationships by calling ``generic_objects()``.
+This returns the actual objects that the blog post is connected to.
+
+.. code-block:: html
+
+    <h3>Related to:</h3>
+    <ul>
+      {% for obj in object.related.all.generic_objects %}
+        <li><a href="{{ obj.get_absolute_url }}">{{ obj }}</a></li>
+      {% empty %}
+        <li>Nothing here</li>
+      {% endfor %}
+    </ul>
+
 
 And that about wraps it up!
