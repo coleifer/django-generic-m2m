@@ -2,10 +2,14 @@
 django-generic-m2m
 ==================
 
-relate anything to anything.  the image below shows a blog post that has been
-"related" to 2 "Person" models and a "City" model:
+relate anything to anything.  the image below is a screenshot of the `example app <http://readthedocs.org/docs/django-generic-m2m/en/latest/example.html>`_ 
+and shows a blog post that has been "related" to 2 "Place" models and a "City" model:
 
-.. image:: http://media.charlesleifer.com/images/photos/autocomp_detail.png
+.. image:: http://media.charlesleifer.com/images/photos/genericm2m-tagging.png
+
+check the `documentation <http://readthedocs.org/docs/django-generic-m2m/en/latest/>`_ for
+more examples and an in-depth description of the app (or keep reading for
+the 30 second version).
 
 
 what it does
@@ -13,8 +17,6 @@ what it does
 
 the purpose of this project is to allow you to create database-level
 relationships between various objects using a consistent api.
-
-for a full tour of the api, the best place to look is the tests
 
 
 example app
@@ -25,9 +27,9 @@ can be used to create "tags" between models.  it uses `nathanborror's basic apps
 with `django-completion <https://github.com/coleifer/django-completion>`_ (shameless plug)
 to allow users to "autocomplete" various relationships between models, so if I'm
 a user and want to create a new blog post I can tag it with
-relationships to objects representing a city, a person, a funny photo of a cat, etc:
+relationships to objects representing a city, a place, a funny photo of a cat, etc.
 
-.. image:: http://media.charlesleifer.com/images/photos/autocomp-cats.png
+.. image:: http://media.charlesleifer.com/images/photos/generic-m2m-rel-objs.png
 
 
 quick overview
