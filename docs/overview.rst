@@ -60,10 +60,11 @@ What is this "related" attribute?
 ----------------------------------
 
 The "related" attribute from the previous examples is the way the generic many-to-many 
-is exposed for each model. Behind-the-scenes it is using ``genericm2m.models.RelatedObject``, 
+is exposed for each model. Behind-the-scenes it is using ``genericm2m.models.BaseGFKRelatedObject``, 
 which looks like this::
 
-    class RelatedObject(models.Model):
+
+    class BaseGFKRelatedObject(models.Model):
         """
         A generic many-to-many implementation where diverse objects are related
         across a single model to other diverse objects -> using a dual GFK
@@ -77,23 +78,33 @@ which looks like this::
         object_type = models.ForeignKey(ContentType, related_name="related_%(class)s")
         object_id = models.IntegerField(db_index=True)
         object = GenericForeignKey(ct_field="object_type", fk_field="object_id")
-
-        alias = models.CharField(max_length=255, blank=True)
-        creation_date = models.DateTimeField(auto_now_add=True)
-
+        
         class Meta:
-            ordering = ('-creation_date',)
-
-        def __unicode__(self):
-            return '%s related to %s ("%s")' % (self.parent, self.object, self.alias)
+            abstract = True
 
 
 There's not really too much that should be weird about this model. It contains 
 two ``GenericForeignKeys``, one to represent the "from" object, the source of the 
 connection, and another to represent to "to" object (what "from" is being connected 
-with). Additionally, the model is storing a little bit of metadata about the 
-relationship, specifically an "alias" which is just a character string, and a ``creation_date``
-to mark when this relationship was created.
+with).
+
+Because "abstract" models cannot store actual objects, the project comes with a
+default implementation which has two additional fields, ``alias`` and ``creation_date``::
+
+    class RelatedObject(BaseGFKRelatedObject):
+        """
+        A subclass of BaseGFKRelatedObject which adds two fields used for tracking
+        some metadata about the relationship, an alias and the date the relationship
+        was created
+        """
+        alias = models.CharField(max_length=255, blank=True)
+        creation_date = models.DateTimeField(auto_now_add=True)
+        
+        class Meta:
+            ordering = ('-creation_date',)
+
+        def __unicode__(self):
+            return '%s related to %s ("%s")' % (self.parent, self.object, self.alias)
 
 
 Creating and querying relationships
@@ -104,6 +115,7 @@ The API for creating and querying relationships is exposed via this descriptor.
 
 Here is a sample interactive terminal session::
 
+    >>> # create a handful of objects to use in our demo
     >>> pizza = Food.objects.create(name='pizza')
     >>> cereal = Food.objects.create(name='cereal')
     >>> beer = Beverage.objects.create(name='beer')
@@ -115,7 +127,7 @@ Here is a sample interactive terminal session::
 Now that we have some Food, Beverage and User objects, create some connections between them::
 
     >>> rel_obj = pizza.related.connect(beer, alias='Beer and pizza are good')
-    >>> type(rel_obj)
+    >>> type(rel_obj) # what did we just create?
     <class 'genericm2m.models.RelatedObject'>
 
 The object that represents the connection is an instance of whatever is passed to 
@@ -132,7 +144,7 @@ new related object::
 
 These relationships can be queried::
 
-    >>> pizza.related.all()
+    >>> pizza.related.all() # find all objects that pizza has been related to
     [<RelatedObject: pizza related to beer ("Beer and pizza are good")>]
 
 When the `RelatedObject` is a GFK, as is the case here, the ``RelatedObjectsDescriptor`` will 
@@ -140,36 +152,36 @@ return a special ``QuerySet`` class that provides an optimized lookup of any GFK
 
     >>> type(pizza.related.all())
     <class 'genericm2m.models.GFKOptimizedQuerySet'>
-    >>> pizza.related.all().generic_objects()
+    >>> pizza.related.all().generic_objects() # traverse the GFK relationships
     [<Beverage: beer>]
 
 If the object on the back-side of the relationship also has a ``RelatedObjectsDescriptor`` with 
 the same intermediary model, reverse lookups are possible:
 
-    >>> beer.related.related_to()
+    >>> beer.related.related_to() # query the back-side of the relationship
     [<RelatedObject: pizza related to beer ("Beer and pizza are good")>]
 
 Create some more connections - any combination of models can be used. Below I'm 
 connectiong a Food (cereal) to both Beverage objects (milk) and User objects (Chocula)::
 
-    >>> cereal.related.connect(milk)
+    >>> cereal.related.connect(milk) # connecting to a beverage
     <RelatedObject: cereal related to milk ("")>
-    >>> cereal.related.connect(chocula)
+    >>> cereal.related.connect(chocula) # connecting to a user
     <RelatedObject: cereal related to chocula ("")>
 
-    >>> cereal.related.all()
+    >>> cereal.related.all() # show what cereal is related to
     [<RelatedObject: cereal related to chocula ("")>,
      <RelatedObject: cereal related to milk ("")>]
 
-    >>> chocula.related.all()
+    >>> chocula.related.all() # relationships are ONE WAY
     []
-    >>> chocula.related.related_to()
+    >>> chocula.related.related_to() # querying the backside shows what has been connected to chocula
     [<RelatedObject: cereal related to chocula ("")>]
 
 Also worth noting is that the ``RelatedObjectsDescriptor`` works on both the 
 instance-level and the class-level, so if we wanted to see all objects related to foods::
 
-    >>> Food.related.all()
+    >>> Food.related.all() # anything that has been related to a food
     [<RelatedObject: cereal related to chocula ("")>,
      <RelatedObject: cereal related to milk ("")>,
      <RelatedObject: pizza related to beer ("Beer and pizza are good")>]
@@ -197,7 +209,7 @@ have a ``RelatedBeverage`` model that our Food model will use::
 The "related_beverages" attribute is an instance of ``RelatedObjectsDescriptor``,
 but it is instantiated with a couple of arguments:
 
-* RelatedBeverage: the model to be used to hold the "connections"
+* ``RelatedBeverage``: the model to be used to hold the "connections"
 * 'food': the field name on the above model which maps to the "from" object
 * 'beverage': the field name which maps to the "to" object
 

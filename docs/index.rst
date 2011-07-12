@@ -20,6 +20,7 @@ Contents:
    
    installation
    overview
+   example
 
 Indices and tables
 ==================
