@@ -19,8 +19,8 @@ Contents:
    :maxdepth: 2
    
    installation
-   overview
    example
+   overview
 
 Indices and tables
 ==================
