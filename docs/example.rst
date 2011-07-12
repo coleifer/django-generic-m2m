@@ -10,9 +10,8 @@ to allow users to "autocomplete" various objects in the database, making it easy
 for users to tag one piece of content with other content from the database.
 
 Below is a screen-shot of a user creating a new blog post.  The "relationships"
-text input allows autocompletion of several models, which when selected appear
-as links (clicking will remove the "tags").  When the form is submitted, those
-"tags" become stored using the generic-m2m API.
+text input does autocompletion making it easy to add "tags" to various models. 
+When the form is submitted, those "tags" become stored using the generic-m2m API.
 
 .. image:: genericm2m-tagging.png
 
