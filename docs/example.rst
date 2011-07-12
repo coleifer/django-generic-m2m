@@ -1,7 +1,7 @@
 Example App
 ===========
 
-The example app demonstrates how you can use django-generic-m2m to create "tags"
+The example app demonstrates how you can use `django-generic-m2m <https://github.com/coleifer/django-generic-m2m>`_ to create "tags"
 between different types of models.
 
 It uses several apps from `django basic apps <https://github.com/nathanborror/django-basic-apps>`_
