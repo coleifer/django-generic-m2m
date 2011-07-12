@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content_title %}<h2>Home</h2>{% endblock %}
+
+{% block content %}
+  <p>Welcome to the example site for <a href="https://github.com/coleifer/django-generic-m2m">django-generic-m2m</a></p>
+  
+  <p>You can access the <a href="/admin/">admin area</a> using <strong>admin:admin</strong></p>
+  
+  <p>Try one of the following links to create content:</p>
+  <ul>
+    <li><a href="/create/photo/">/create/photo/</a></li>
+    <li><a href="/create/post/">/create/post/</a></li>
+  </ul>
+  
+  <p>Or feel free to <a href="/blog/">browse blogs</a> and <a href="/media/">photos</a></p>
+{% endblock %}

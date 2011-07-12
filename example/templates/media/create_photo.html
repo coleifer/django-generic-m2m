@@ -10,12 +10,12 @@
   </script>
 {% endblock %}
 
-{% block title %}Create post{% endblock %}
+{% block title %}Create photo{% endblock %}
 
-{% block content_title %}<h2>Create post</h2>{% endblock %}
+{% block content_title %}<h2>Create photo</h2>{% endblock %}
 
 {% block content %}
-  <form method="post" action="">{% csrf_token %}
+  <form method="post" enctype="multipart/form-data" action="">{% csrf_token %}
     {{ form.as_p }}
     <p><button type="submit">Save</button></p>
   </form>

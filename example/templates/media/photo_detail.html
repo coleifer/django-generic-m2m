@@ -1,4 +1,4 @@
-{% extends "blog/base_blog.html" %}
+{% extends "media/base_photos.html" %}
 
 
 {% block title %}{{ object.title }}{% endblock %}
@@ -6,10 +6,10 @@
 {% block content_title %}<h2>{{ object.title }}</h2>{% endblock %}
 
 {% block content %}
-  <p class="date">{{ object.publish|date:"j F Y" }}</p>
+  <p class="date">{{ object.uploaded|date:"j F Y" }}</p>
 
   <div class="body">
-    <p>{{ object.body|safe }}</p>
+    <img src="{{ object.photo.url }}" style="width: 500px;" />
   </div>
 
   <h3>Related to:</h3>

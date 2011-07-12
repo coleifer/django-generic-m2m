@@ -1,16 +1,14 @@
 from django import forms
 from django.contrib.contenttypes.models import ContentType
+from django.template.defaultfilters import slugify
 
 from basic.blog.models import Post
+from basic.media.models import Photo
 
 
-class PostForm(forms.ModelForm):
+class BaseRelationshipsForm(forms.ModelForm):
     relationships = forms.CharField(required=False)
     hidden_relationships = forms.CharField(required=False, widget=forms.HiddenInput())
-    
-    class Meta:
-        model = Post
-        fields = ('title', 'slug', 'body',)
     
     def clean_hidden_relationships(self):
         hidden = self.cleaned_data.get('hidden_relationships') or ''
@@ -27,3 +25,22 @@ class PostForm(forms.ModelForm):
             objects.append(obj)
         
         return objects
+
+
+class SlugifyMixin(object):
+    def clean_title(self):
+        title = self.cleaned_data.get('title')
+        self.instance.slug = slugify(title)
+        return title
+
+
+class PostForm(BaseRelationshipsForm, SlugifyMixin):
+    class Meta:
+        model = Post
+        fields = ('title', 'body',)
+
+
+class PhotoForm(BaseRelationshipsForm, SlugifyMixin):
+    class Meta:
+        model = Photo
+        fields = ('title', 'photo',)

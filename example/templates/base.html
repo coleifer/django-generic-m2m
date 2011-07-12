@@ -15,10 +15,21 @@
 </head>
 
 <body class="{% block body_class %}{% endblock %}">
+  <div id="nav" class="clearfix">
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/admin/">Site Admin</a></li>
+      <li><a href="/create/photo/">+ Photo</a></li>
+      <li><a href="/media/">All Photos</a></li>
+      <li><a href="/create/post/">+ Post</a></li>
+      <li><a href="/blog/">All Posts</a></li>
+    </ul>
+  </div>
+  
   <div id="container">
     {% block content_wrapper %}
     <div id="main">
-      <h1>{% block content_title %}{% endblock %}</h1>
+      {% block content_title %}{% endblock %}
       {% block content %}{% endblock %}
     </div>
     {% endblock %}

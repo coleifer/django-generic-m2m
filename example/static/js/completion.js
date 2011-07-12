@@ -6,8 +6,8 @@ Site = window.Site || {};
     this.options = options || {};
     this.default_url = '/autocomplete/';
     
-    this.span_class = this.options.span_class || 'ui-autocomplete-result';
-    this.remove_selector = this.options.remove_selector || '.' + this.span_class + ' a';
+    this.result_class = this.options.result_class || 'ui-autocomplete-result';
+    this.remove_selector = this.options.remove_selector || '.' + this.result_class;
   };
 
   Autocompletion.prototype.bind_listener = function(input_sel, hidden_sel) {
@@ -24,18 +24,17 @@ Site = window.Site || {};
     
     $(this.remove_selector).live('click', function(e) {
       e.preventDefault();
-      var span = $(this).parent();
       var django_id = this.hash.slice(1);
       var hidden_id_list = self.hidden_element.val().split(',');
       new_ids = remove_from_list(hidden_id_list, django_id);
       self.hidden_element.val(new_ids.join(','));
-      span.remove();
+      $(this).remove();
     });
   };
   
   Autocompletion.prototype.select_result = function(item) {
-    var span = $('<span class="'+this.span_class+'">'+item.label+' <a href="#'+item.id+'">x</a></span>');
-    span.insertAfter(this.input_element);
+    var elem = $('<a href="#'+item.id+'" title="click to remove" class="'+this.result_class+'">'+item.label+' <strong>x</strong></a>');
+    elem.insertAfter(this.input_element);
     
     var current = this.hidden_element.val();
     this.hidden_element.val(current+item.id+',');

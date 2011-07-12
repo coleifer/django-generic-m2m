@@ -7,6 +7,9 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
 ADMIN_MEDIA_PREFIX = '/static/admin/'
 
+MEDIA_ROOT = '%s/media/' % (SITE_ROOT)
+MEDIA_URL = '/media/'
+
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     '%s/static/' % (SITE_ROOT),
@@ -90,6 +93,7 @@ INSTALLED_APPS = (
     'basic.media',
     'basic.people',
     'basic.places',
+    'tagging', # needed by basic
     'completion',
     'genericm2m',
     

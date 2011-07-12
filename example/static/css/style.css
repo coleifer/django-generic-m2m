@@ -76,7 +76,7 @@ pre, code, kbd, samp { font-family: monospace, sans-serif; }
 body, select, input, textarea, button { 
   /* #444 looks better than black: twitter.com/H_FJ/statuses/11800719859 */ 
   color: #444; 
-  font-family: Georgia, serif;
+  font-family: Helvetica, sans;
 }
 
 /* Headers (h1,h2,etc) have no default font-size or margin,
@@ -130,17 +130,6 @@ label, input[type=button], input[type=submit], button { cursor: pointer; }
 /* webkit browsers add a 2px margin outside the chrome of form elements */  
 button, input, select, textarea { margin: 0; }
 
-/* colors for form validity */
-input:valid, textarea:valid   {  }
-input:invalid, textarea:invalid { 
-      border-radius: 1px;
-    -moz-box-shadow: 0px 0px 5px red; 
- -webkit-box-shadow: 0px 0px 5px red; 
-         box-shadow: 0px 0px 5px red;
-}
-.no-boxshadow input:invalid, 
-.no-boxshadow textarea:invalid { background-color: #f0dddd; }
-
 
 /* These selection declarations have to be separate.
    No text-shadow: twitter.com/miketaylr/status/12228805301 
@@ -193,22 +182,29 @@ button {  width: auto; overflow: visible; }
     Author: 
  */
 
-body { width: 800px; margin: 0 auto; }
+body { width: 600px; margin: 0 auto; background-color: #8B0006; }
 
-h1 { font-size: 24px; margin: 0 0 12px; }
-h2 { font-size: 22px; margin-bottom: 12px; }
-h3 { font-size: 18px; margin-bottom: 12px; }
+div#nav { background-color: #2d2d2d; }
+div#nav ul { list-style-type: none; }
+div#nav ul li { float: left; position: relative; }
+div#nav ul li a { display: block; float: left; line-height: 20px; padding: 5px 7.5px; color: #dfdfdf; text-decoration: none; }
+div#nav ul li a:hover { color: #fff; background-color: #8b0006; }
+
+h1,h2,h3 { margin: 0 0 12px; color: #BC2A2D; padding: 3px 0; }
+h1 { font-size: 24px; border-bottom: 1px solid #BC2A2D; }
+h2 { font-size: 22px; border-bottom: 1px solid #BC2A2D; }
+h3 { font-size: 16px; color: #464646; }
 p { font-size: 12px; margin: 12px 0 12px; }
-
-#messages { border:1px solid #C8DCC2; margin:1em 0; }
-#messages ul .debug{ background: #EEFAEA; padding: 0.5em, 0 0.5em 0; list-style: none;}
-#messages ul .info{ background: #EEFAEA; padding: 0.5em, 0 0.5em 0; list-style: none;}
-#messages ul .success{ background: #EEFAEA; padding: 0.5em, 0 0.5em 0; list-style: none;}
-#messages ul .warning{ background: #FF3333; padding: 0.5em, 0 0.5em 0; list-style: none;}
-#messages ul .error{ background: #FF3333; padding: 5px, 0 5px 0; list-style: none;}
-#messages ul li { background: none; padding-left: 5px; padding-top: 8px; padding-bottom: 8px;font-size: 1.2em; }
 
 form { margin: 10px 0; }
 form label { display: block; padding: 3px 0; }
+input, button, select, textarea { border: 1px solid #dfdfdf; padding: 3px; -moz-border-radius: 4px; -webkit-border-radius: 4px; }
 
-span.ui-autocomplete-result { display: block, float: left; padding: 3px 12px; margin: 0 0 0 10px; border: 1px solid #eee; -webkit-border-radius: 5px; }
+div#container { background-color: #fff; padding: 20px; border-left: 6px solid #2D2D2D; border-right: 6px solid #2D2D2D; border-bottom: 6px solid #2D2D2D; }
+
+a,a:active { color: #464646; font-weight: bold; }
+a:hover,a:visited { color: #bc2a2d; }
+a.ui-autocomplete-result { font-size: 11px; display: block, float: left; padding: 3px 12px; margin: 0 0 0 10px; text-decoration: none; border: 1px solid #BC2A2D; -webkit-border-radius: 5px; }
+
+body .ui-menu-item { font-size: 12px; }
+body .ui-menu-item a { font-weight: normal; }
