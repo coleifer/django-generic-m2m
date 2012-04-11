@@ -90,6 +90,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.staticfiles',
     'basic.blog',
+    'basic.inlines',
     'basic.media',
     'basic.people',
     'basic.places',
