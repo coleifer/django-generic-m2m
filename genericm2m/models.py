@@ -27,28 +27,24 @@ class GFKOptimizedQuerySet(QuerySet):
         return self._gfk_field
     
     def generic_objects(self):
-        clone = self._clone()
+        clone = self._clone() # clone queryset
         
         ctypes_and_fks = {}
         
         gfk_field = self.get_gfk()
-        ctype_field = '%s_id' % gfk_field.ct_field
+        ctype_field = gfk_field.ct_field
         fk_field = gfk_field.fk_field
         
-        for obj in clone:
-            ctype = ContentType.objects.get_for_id(getattr(obj, ctype_field))
+        for obj in clone.select_related(ctype_field): # get intermediate objects with content type as related field
+            ctype = getattr(obj, ctype_field)
             obj_id = getattr(obj, fk_field)
-            
+            # create dictionary with content type as key and ids in a list as value
             ctypes_and_fks.setdefault(ctype, [])
             ctypes_and_fks[ctype].append(obj_id)
-        
-        gfk_objects = {}
-        for ctype, obj_ids in ctypes_and_fks.items():
-            gfk_objects[ctype.pk] = ctype.model_class()._default_manager.in_bulk(obj_ids)
-        
+
         obj_list = []
-        for obj in clone:
-            obj_list.append(gfk_objects[getattr(obj, ctype_field)][getattr(obj, fk_field)])
+        for ctype, obj_ids in ctypes_and_fks.items():
+            obj_list += ctype.model_class()._default_manager.in_bulk(obj_ids).values() # get items for each content type
         
         return obj_list
 
