@@ -372,3 +372,9 @@ class RelationsTestCase(TestCase):
         ])
         
         self.assertEqual(related_c.generic_objects(), [])
+
+    def test_reverse_relations(self):
+        self.pizza.related.connect(self.soda)
+
+        self.assertEqual(list(self.pizza.related.all()),
+            list(self.soda.related.all()))
