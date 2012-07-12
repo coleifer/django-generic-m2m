@@ -114,6 +114,28 @@ class RelationsTestCase(TestCase):
             (self.soda, self.pizza),
         ))
 
+    def test_symmetrical(self):
+        self.pizza.related.connect(self.soda)
+        self.pizza.related.connect(self.beer)
+        self.pizza.related.connect(self.table)
+        self.sandwich.related.connect(self.soda)
+        self.sandwich.related.connect(self.milk)
+        self.mario.related.connect(self.soda)
+        self.soda.related.connect(self.pizza)
+
+        related = self.soda.related.symmetrical().order_by('id')
+        self.assertRelatedEqual(related, (
+            (self.pizza, self.soda),
+            (self.sandwich, self.soda),
+            (self.mario, self.soda),
+            (self.soda, self.pizza),
+        ))
+
+        related = self.beer.related.symmetrical()
+        self.assertRelatedEqual(related, (
+            (self.pizza, self.beer),
+        ))
+
     def test_manager_methods(self):
         """
         Since the RelatedObjectsDescriptor behaves like a dynamic manager (much

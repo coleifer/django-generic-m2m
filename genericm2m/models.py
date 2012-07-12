@@ -173,6 +173,12 @@ class RelatedObjectsDescriptor(object):
                     **rel_obj.get_query_to(instance)
                 )
 
+            def symmetrical(self):
+                return superclass.get_query_set(self).filter(
+                    Q(**rel_obj.get_query_from(instance)) |
+                    Q(**rel_obj.get_query_to(instance))
+                ).distinct()
+
         manager = RelatedManager()
         manager.core_filters = core_filters
         manager.model = self.related_model
