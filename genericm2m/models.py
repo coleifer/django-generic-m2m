@@ -55,11 +55,10 @@ class GFKOptimizedQuerySet(QuerySet):
 
 
 class RelatedObjectsDescriptor(object):
-    def __init__(self, model=None, from_field='parent', to_field='object', symmetrical=False):
+    def __init__(self, model=None, from_field='parent', to_field='object'):
         self.related_model = model or RelatedObject
         self.from_field = self.get_related_model_field(from_field)
         self.to_field = self.get_related_model_field(to_field)
-        self.symmetrical = symmetrical
 
     def get_related_model_field(self, field_name):
         opts = self.related_model._meta
