@@ -334,6 +334,8 @@ class RelationsTestCase(TestCase):
         self.note_a.related.connect(self.pizza)
         self.note_a.related.connect(self.note_b)
 
+        self.pizza.related.connect(self.note_b)
+
         # create some notes with custom attributes
         self.note_b.related.connect(self.cereal, alias='cereal note', description='lucky charms!')
         self.note_b.related.connect(self.milk, alias='milk note', description='goes good with cereal')
@@ -355,6 +357,12 @@ class RelationsTestCase(TestCase):
             (self.note_b, self.cereal),
             (self.note_b, self.milk),
         ))
+
+        related_to = self.note_b.related.related_to()
+        # note that pizza does not show up here even though it is related to note b
+        # this is because that relationship was stored in a different table (RelatedObject)
+        # as opposed to AnotherRelatedObject
+        self.assertEqual(related_to.generic_objects(), [self.note_a])
 
         cereal_rel, milk_rel = related_b
 
