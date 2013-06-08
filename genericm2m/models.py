@@ -226,4 +226,4 @@ class RelatedObject(BaseGFKRelatedObject):
         ordering = ('-creation_date',)
 
     def __unicode__(self):
-        return '%s related to %s ("%s")' % (self.parent, self.object, self.alias)
+        return u'%s related to %s ("%s")' % (self.parent, self.object, self.alias)
