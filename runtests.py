@@ -29,7 +29,10 @@ from django.test.utils import get_runner
 
 def runtests(*test_args):
     if not test_args:
-        test_args = ['genericm2m_tests']
+        if sys.version_info[0] > 2:
+            test_args = ['genericm2m.genericm2m_tests']
+        else:
+            test_args = ["genericm2m_tests"]
     parent = dirname(abspath(__file__))
     sys.path.insert(0, parent)
     TestRunner = get_runner(settings)
