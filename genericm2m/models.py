@@ -4,6 +4,8 @@ from django.db import models
 from django.db.models import Q
 from django.db.models.query import QuerySet
 
+from sys import version_info
+from genericm2m import PY3, unicode, str
 
 class GFKOptimizedQuerySet(QuerySet):
     def __init__(self, *args, **kwargs):
@@ -102,7 +104,7 @@ class RelatedObjectsDescriptor(object):
 
     def __set__(self, instance, value):
         if instance is None:
-            raise AttributeError, "Manager must be accessed via instance"
+            raise AttributeError("Manager must be accessed via instance")
 
         manager = self.__get__(instance)
         manager.add(*value)
@@ -132,9 +134,13 @@ class RelatedObjectsDescriptor(object):
             def add(self, *objs):
                 for obj in objs:
                     if not isinstance(obj, self.model):
-                        raise TypeError, "'%s' instance expected" % self.model._meta.object_name
-                    for (k, v) in core_filters.iteritems():
-                        setattr(obj, k, v)
+                        raise TypeError("'%s' instance expected" % self.model._meta.object_name)
+                    if not PY3:
+                        for (k, v) in core_filters.iteritems():
+                            setattr(obj, k, v)
+                    else:
+                        for (k, v) in core_filters.items():
+                            setattr(obj, k, v)
                     obj.save()
             add.alters_data = True
 
@@ -154,8 +160,8 @@ class RelatedObjectsDescriptor(object):
                     if obj in self.all():
                         obj.delete()
                     else:
-                        raise rel_obj.related_model.DoesNotExist, \
-                            "%r is not related to %r." % (obj, instance)
+                        raise rel_obj.related_model.DoesNotExist(
+                            "%r is not related to %r." % (obj, instance))
             remove.alters_data = True
 
             def clear(self):
@@ -226,4 +232,4 @@ class RelatedObject(BaseGFKRelatedObject):
         ordering = ('-creation_date',)
 
     def __unicode__(self):
-        return u'%s related to %s ("%s")' % (self.parent, self.object, self.alias)
+        return unicode('%s related to %s ("%s")' % (self.parent, self.object, self.alias))
