@@ -5,7 +5,7 @@ from django.db.models import Q
 from django.db.models.query import QuerySet
 
 from sys import version_info
-from . import is_3, unicode, str
+from genericm2m import PY3, unicode, str
 
 class GFKOptimizedQuerySet(QuerySet):
     def __init__(self, *args, **kwargs):
@@ -135,7 +135,7 @@ class RelatedObjectsDescriptor(object):
                 for obj in objs:
                     if not isinstance(obj, self.model):
                         raise TypeError("'%s' instance expected" % self.model._meta.object_name)
-                    if not is_3:
+                    if not PY3:
                         for (k, v) in core_filters.iteritems():
                             setattr(obj, k, v)
                     else:
