@@ -1,4 +1,4 @@
-VERSION = (0, 2, 1)
+VERSION = (0, 2, 2)
 from sys import version_info
 PY3 = version_info[0] == 3
 
