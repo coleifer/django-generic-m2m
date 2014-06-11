@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
@@ -82,7 +83,7 @@ class RelatedObjectsDescriptor(object):
         elif isinstance(instance, field.rel.to):
             return {field.name: instance}
 
-        raise TypeError('Unable to query %s with %s' % (field, instance))
+        raise TypeError(u'Unable to query %s with %s' % (field, instance))
 
     def get_query_from(self, instance):
         return self.get_query_for_field(instance, self.from_field)
@@ -134,7 +135,7 @@ class RelatedObjectsDescriptor(object):
             def add(self, *objs):
                 for obj in objs:
                     if not isinstance(obj, self.model):
-                        raise TypeError("'%s' instance expected" % self.model._meta.object_name)
+                        raise TypeError(u"'%s' instance expected" % self.model._meta.object_name)
                     if not PY3:
                         for (k, v) in core_filters.iteritems():
                             setattr(obj, k, v)
@@ -161,7 +162,7 @@ class RelatedObjectsDescriptor(object):
                         obj.delete()
                     else:
                         raise rel_obj.related_model.DoesNotExist(
-                            "%r is not related to %r." % (obj, instance))
+                            u"%r is not related to %r." % (obj, instance))
             remove.alters_data = True
 
             def clear(self):
@@ -232,4 +233,4 @@ class RelatedObject(BaseGFKRelatedObject):
         ordering = ('-creation_date',)
 
     def __unicode__(self):
-        return unicode('%s related to %s ("%s")' % (self.parent, self.object, self.alias))
+        return unicode(u'%s related to %s ("%s")' % (self.parent, self.object, self.alias))
