@@ -414,3 +414,21 @@ class RelationsTestCase(TestCase):
         ])
 
         self.assertEqual(related_c.generic_objects(), [])
+
+    def test_generic_objects_filtered(self):
+        """
+        Get generic objects filtered by Model.
+        """
+        self.pizza.related.connect(self.beer)
+        self.pizza.related.connect(self.soda)
+        self.pizza.related.connect(self.mario)
+
+        # Get all generic related content
+        related = self.pizza.related.all()
+        objects = related.generic_objects()
+        self.assertEqual(objects, [self.mario, self.soda, self.beer])
+
+        # Get Person generic related content only.
+        related = self.pizza.related.all()
+        objects = related.generic_objects(Person)
+        self.assertEqual(objects, [self.mario])

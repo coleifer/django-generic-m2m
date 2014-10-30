@@ -30,7 +30,7 @@ class GFKOptimizedQuerySet(QuerySet):
 
         return self._gfk_field
 
-    def generic_objects(self):
+    def generic_objects(self, model=None):
         clone = self._clone()
 
         ctypes_and_fks = {}
@@ -52,7 +52,9 @@ class GFKOptimizedQuerySet(QuerySet):
 
         obj_list = []
         for obj in clone:
-            obj_list.append(gfk_objects[getattr(obj, ctype_field)][getattr(obj, fk_field)])
+            obj = gfk_objects[getattr(obj, ctype_field)][getattr(obj, fk_field)]
+            if not model or (model and isinstance(obj, model)):
+                obj_list.append(obj)
 
         return obj_list
 
