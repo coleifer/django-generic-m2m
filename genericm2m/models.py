@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import django
 try:
     from django.contrib.contenttypes.fields import GenericForeignKey
 except ImportError:
@@ -136,6 +137,9 @@ class RelatedObjectsDescriptor(object):
                     return qs.filter(**(core_filters))
                 else:
                     return superclass.get_queryset(self).filter(**(core_filters))
+
+            if django.VERSION < (1, 6):
+                get_query_set = get_queryset
 
             def add(self, *objs):
                 for obj in objs:
