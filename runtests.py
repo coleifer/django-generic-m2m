@@ -22,10 +22,12 @@ if not settings.configured:
             'genericm2m',
             'genericm2m.genericm2m_tests',
         ],
+        MIDDLEWARE_CLASSES = (),
     )
 
 from django.test.utils import get_runner
 
+django.setup()
 
 def runtests(*test_args):
     if not test_args:
