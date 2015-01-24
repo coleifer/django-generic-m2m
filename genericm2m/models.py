@@ -136,7 +136,12 @@ class RelatedObjectsDescriptor(object):
                     qs = GFKOptimizedQuerySet(self.model, gfk_field=rel_field)
                     return qs.filter(**(core_filters))
                 else:
-                    return superclass.get_queryset(self).filter(**(core_filters))
+                    if django.VERSION < (1, 6):
+                        method = superclass.get_query_set
+                    else:
+                        method = superclass.get_queryset
+
+                    return method(self).filter(**(core_filters))
 
             if django.VERSION < (1, 6):
                 get_query_set = get_queryset
@@ -190,7 +195,11 @@ class RelatedObjectsDescriptor(object):
                 )
 
             def symmetrical(self):
-                return superclass.get_queryset(self).filter(
+                if django.VERSION < (1, 6):
+                    method = superclass.get_query_set
+                else:
+                    method = superclass.get_queryset
+                return method(self).filter(
                     Q(**rel_obj.get_query_from(instance)) |
                     Q(**rel_obj.get_query_to(instance))
                 ).distinct()

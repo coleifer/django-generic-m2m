@@ -27,7 +27,10 @@ if not settings.configured:
 
 from django.test.utils import get_runner
 
-django.setup()
+try:
+    django.setup()
+except AttributeError:
+    pass
 
 def runtests(*test_args):
     if not test_args:
