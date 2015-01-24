@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
-from django.contrib.contenttypes.generic import GenericForeignKey
+import django
+try:
+    from django.contrib.contenttypes.fields import GenericForeignKey
+except ImportError:
+    from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models import Q
@@ -127,12 +131,15 @@ class RelatedObjectsDescriptor(object):
         uses_gfk = self.is_gfk(rel_field)
 
         class RelatedManager(superclass):
-            def get_query_set(self):
+            def get_queryset(self):
                 if uses_gfk:
                     qs = GFKOptimizedQuerySet(self.model, gfk_field=rel_field)
                     return qs.filter(**(core_filters))
                 else:
-                    return superclass.get_query_set(self).filter(**(core_filters))
+                    return superclass.get_queryset(self).filter(**(core_filters))
+
+            if django.VERSION < (1, 6):
+                get_query_set = get_queryset
 
             def add(self, *objs):
                 for obj in objs:
@@ -183,7 +190,7 @@ class RelatedObjectsDescriptor(object):
                 )
 
             def symmetrical(self):
-                return superclass.get_query_set(self).filter(
+                return superclass.get_queryset(self).filter(
                     Q(**rel_obj.get_query_from(instance)) |
                     Q(**rel_obj.get_query_to(instance))
                 ).distinct()
