@@ -2,12 +2,12 @@
 django-generic-m2m
 ==================
 
-relate anything to anything.  the image below is a screenshot of the `example app <http://readthedocs.org/docs/django-generic-m2m/en/latest/example.html>`_ 
+relate anything to anything.  the image below is a screenshot of the `example app <https://django-generic-m2m.readthedocs.io/en/latest/example.html>`_ 
 and shows a blog post that has been "related" to 2 "Place" models and a "City" model:
 
 .. image:: http://media.charlesleifer.com/images/photos/genericm2m-tagging.png
 
-check the `documentation <http://readthedocs.org/docs/django-generic-m2m/en/latest/>`_ for
+check the `documentation <https://django-generic-m2m.readthedocs.io/en/latest/>`_ for
 more examples and an in-depth description of the app (or keep reading for
 the 30 second version).
 
