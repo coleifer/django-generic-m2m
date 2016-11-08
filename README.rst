@@ -5,7 +5,7 @@ django-generic-m2m
 relate anything to anything.  the image below is a screenshot of the `example app <https://django-generic-m2m.readthedocs.io/en/latest/example.html>`_ 
 and shows a blog post that has been "related" to 2 "Place" models and a "City" model:
 
-.. image:: http://media.charlesleifer.com/images/photos/genericm2m-tagging.png
+.. image:: http://media.charlesleifer.com/blog/photos/genericm2m-tagging.png
 
 check the `documentation <https://django-generic-m2m.readthedocs.io/en/latest/>`_ for
 more examples and an in-depth description of the app (or keep reading for
@@ -29,7 +29,7 @@ to allow users to "autocomplete" various relationships between models, so if I'm
 a user and want to create a new blog post I can tag it with
 relationships to objects representing a city, a place, a funny photo of a cat, etc.
 
-.. image:: http://media.charlesleifer.com/images/photos/generic-m2m-rel-objs.png
+.. image:: http://media.charlesleifer.com/blog/photos/generic-m2m-rel-objs.png
 
 
 quick overview
