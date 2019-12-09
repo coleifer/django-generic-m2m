@@ -71,7 +71,7 @@ class RelatedObjectsDescriptor(object):
 
     def get_related_model_field(self, field_name):
         opts = self.related_model._meta
-        for virtual_field in opts.virtual_fields:
+        for virtual_field in opts.private_fields:
             if virtual_field.name == field_name:
                 return virtual_field
         return opts.get_field(field_name)
@@ -225,12 +225,12 @@ class BaseGFKRelatedObject(models.Model):
     across a single model to other diverse objects -> using a dual GFK
     """
     # SOURCE OBJECT:
-    parent_type = models.ForeignKey(ContentType, related_name="child_%(class)s")
+    parent_type = models.ForeignKey(ContentType, related_name="child_%(class)s", on_delete=models.CASCADE)
     parent_id = models.IntegerField(db_index=True)
     parent = GenericForeignKey(ct_field="parent_type", fk_field="parent_id")
 
     # ACTUAL RELATED OBJECT:
-    object_type = models.ForeignKey(ContentType, related_name="related_%(class)s")
+    object_type = models.ForeignKey(ContentType, related_name="related_%(class)s", on_delete=models.CASCADE)
     object_id = models.IntegerField(db_index=True)
     object = GenericForeignKey(ct_field="object_type", fk_field="object_id")
 
