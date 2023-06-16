@@ -1,3 +1,8 @@
+disclaimer
+----------
+
+This is a fork of the original django-generic-m2m package hosted at https://github.com/coleifer/django-generic-m2m that seems to be abandoned. By now the only changes are the addition of some on_delete statements in models.py to allow usage with django >= 2.0 and the replacement of the since django 1.11 deprecated _meta.virtual_fields with _meta.private_fields it aliased to.
+
 ==================
 django-generic-m2m
 ==================
