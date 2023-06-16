@@ -225,9 +225,9 @@ class BaseGFKRelatedObject(models.Model):
     across a single model to other diverse objects -> using a dual GFK
     """
     # SOURCE OBJECT:
-    parent_type = models.ForeignKey(ContentType, related_name="child_%(class)s")
+    parent_type = models.ForeignKey(ContentType, related_name="child_%(class)s", on_delete=models.CASCADE)
     parent_id = models.IntegerField(db_index=True)
-    parent = GenericForeignKey(ct_field="parent_type", fk_field="parent_id")
+    parent = GenericForeignKey(ct_field="parent_type", fk_field="parent_id", on_delete=models.CASCADE)
 
     # ACTUAL RELATED OBJECT:
     object_type = models.ForeignKey(ContentType, related_name="related_%(class)s")
